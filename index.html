@@ -52,8 +52,10 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 .cover-frame .frame-b,.login-frame .frame-b{padding:12px;overflow:auto;display:block}
 .frame-f{border-top:1px solid #e4e7ed;padding:4px 8px;font-size:10px;color:var(--muted);background:#fff}
 .hot{cursor:pointer}
-.frame-b .hot:hover{box-shadow:0 0 0 2px rgba(64,158,255,.4);position:relative;z-index:1}
-.frame-b .hot[data-jump]:hover{box-shadow:0 0 0 2px rgba(217,72,15,.45)}
+/* 悬停只用 outline：禁止改 position/display，否则绝对定位抽屉/图钉会闪动 */
+.frame-b .hot:hover{outline:2px solid rgba(64,158,255,.45);outline-offset:1px}
+.frame-b .hot[data-jump]:hover{outline-color:rgba(217,72,15,.55)}
+.drawer,.modal-dialog,.modal-overlay,.pin,.viz-panel{outline:none}
 .ghost{color:var(--muted)}.hint{color:var(--muted);font-size:12px;margin-top:8px}
 #tip{display:none;position:fixed;z-index:20;max-width:280px;background:#1a1a1a;color:#fff;font-size:11px;padding:8px 10px;pointer-events:none;line-height:1.4}
 #tip b{color:#9ec1ff}#tip .jump{color:#ffb78a}
@@ -118,7 +120,7 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 .modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:20}
 .modal-overlay.is-open{display:flex}
 .modal-dialog{background:#fff;border-radius:8px;width:420px;max-width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-.modal-dialog.jump-target,.drawer.jump-target{box-shadow:0 0 0 3px rgba(217,72,15,.4),0 8px 32px rgba(0,0,0,.2)}
+.modal-dialog.jump-target,.drawer.jump-target,.modal-overlay.jump-target{outline:3px solid var(--jump);outline-offset:-3px}
 .modal-hd{padding:14px 18px;font-weight:650;border-bottom:1px solid var(--border);font-size:15px}
 .modal-bd{padding:16px 18px;font-size:14px;color:var(--text);line-height:1.6}
 .modal-ft{padding:10px 18px 14px;display:flex;justify-content:flex-end;gap:8px}
@@ -232,16 +234,16 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 <span class="spacer"></span>
 <span class="hot" data-page="账户管理" data-el="当前用户" data-ctrl="按钮" style="font-size:13px;color:#606266">管理员 ▾</span>
 </div><div class="page-body"><div class="page-card"><div class="toolbar"><select class="inp hot" data-page="账户管理" data-el="筛-角色" data-ctrl="下拉" data-options="全部/超管/主管/访客"><option selected>全部</option><option>超管</option><option>主管</option><option>访客</option></select><select class="inp hot" data-page="账户管理" data-el="筛-状态" data-ctrl="下拉" data-options="全部/启用/禁用/锁定"><option selected>全部</option><option>启用</option><option>禁用</option><option>锁定</option></select><input class="inp hot" placeholder="关键词" data-page="账户管理" data-el="关键词" data-ctrl="输入框" /><button class="btn btn-primary hot" data-page="账户管理" data-el="查询" data-ctrl="按钮">查询</button><button class="btn btn-default hot" data-page="账户管理" data-el="重置" data-ctrl="按钮">重置</button><button class="btn btn-primary hot" data-page="账户管理" data-el="新增" data-ctrl="按钮" data-jump="modal:账户管理/新增抽屉">新增</button></div><table class="proto-table"><thead><tr><th class="hot" data-page="账户管理" data-el="列-账号" data-ctrl="表头">账号</th><th class="hot" data-page="账户管理" data-el="列-姓名" data-ctrl="表头">姓名</th><th class="hot" data-page="账户管理" data-el="列-角色" data-ctrl="表头">角色</th><th class="hot" data-page="账户管理" data-el="列-绑定项目" data-ctrl="表头">绑定项目</th><th class="hot" data-page="账户管理" data-el="列-状态" data-ctrl="表头">状态</th><th class="hot" data-page="账户管理" data-el="操作列" data-ctrl="表头">操作</th></tr></thead><tbody><tr><td>admin</td><td>超级管理员</td><td>超管</td><td>全部</td><td><span class="tag tag-success">启用</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-编辑" data-ctrl="按钮" data-jump="modal:账户管理/新增抽屉">编辑</a><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-重置密码" data-ctrl="按钮">重置密码</a><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-删除" data-ctrl="按钮" data-jump="modal:confirm-delete">删除</a></td></tr><tr><td>zhang.manager</td><td>张主管</td><td>项目主管</td><td>精矿,尾矿</td><td><span class="tag tag-success">启用</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-编辑" data-ctrl="按钮" data-jump="modal:账户管理/新增抽屉">编辑</a><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-重置密码" data-ctrl="按钮">重置密码</a><a class="btn-link hot" href="javascript:void(0)" data-page="账户管理" data-el="行操作-删除" data-ctrl="按钮" data-jump="modal:confirm-delete">删除</a></td></tr></tbody></table></div></div><div class="drawer-mask is-open"></div>
-<div class="drawer is-open hot" data-modal-id="账户管理/新增抽屉" data-page="账户管理" data-el="新增账户" data-ctrl="抽屉">
-  <div class="drawer-hd">新增账户 <span class="drawer-close">×</span></div>
+<div class="drawer is-open" data-modal-id="账户管理/新增抽屉">
+  <div class="drawer-hd hot" data-page="账户管理" data-el="新增账户" data-ctrl="抽屉">新增账户 <span class="drawer-close">×</span></div>
   <div class="drawer-bd"><div class="form-row"><label>账号</label><input class="inp hot" value="operator1" data-page="账户管理" data-el="账号" data-ctrl="输入框" /></div><div class="form-row"><label>姓名</label><input class="inp hot" value="李值班" data-page="账户管理" data-el="姓名" data-ctrl="输入框" /></div><div class="form-row"><label>角色</label><select class="inp hot" data-page="账户管理" data-el="角色" data-ctrl="下拉"><option>超管</option><option>主管</option><option selected>访客</option></select></div><div class="form-row"><label>绑定项目</label><select class="inp hot" data-page="账户管理" data-el="绑定项目" data-ctrl="下拉"><option selected>精矿管输</option><option>尾矿管输</option><option>全部</option></select></div><div class="form-row"><label>状态</label><select class="inp hot" data-page="账户管理" data-el="状态" data-ctrl="下拉"><option selected>启用</option><option>禁用</option></select></div></div>
   <div class="drawer-ft">
     <button class="btn btn-default hot" data-page="账户管理" data-el="取消" data-ctrl="按钮">取消</button>
     <button class="btn btn-primary hot" data-page="账户管理" data-el="保存" data-ctrl="按钮">保存</button>
   </div>
 </div><div class="modal-overlay" data-modal-id="confirm-delete">
-  <div class="modal-dialog hot" data-page="账户管理" data-el="确认删除" data-ctrl="弹窗">
-    <div class="modal-hd">确认删除</div>
+  <div class="modal-dialog">
+    <div class="modal-hd hot" data-page="账户管理" data-el="确认删除" data-ctrl="弹窗">确认删除</div>
     <div class="modal-bd">确定删除该账户？此操作不可恢复。</div>
     <div class="modal-ft">
       <button class="btn btn-default hot" data-page="账户管理" data-el="取消" data-ctrl="按钮">取消</button>
@@ -255,8 +257,8 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 <span class="spacer"></span>
 <span class="hot" data-page="项目管理" data-el="当前用户" data-ctrl="按钮" style="font-size:13px;color:#606266">管理员 ▾</span>
 </div><div class="page-body"><div class="page-card"><div class="toolbar"><select class="inp hot" data-page="项目管理" data-el="筛-管线" data-ctrl="下拉" data-options="全部/精矿/尾矿"><option selected>全部</option><option>精矿</option><option>尾矿</option></select><input class="inp hot" placeholder="关键词" data-page="项目管理" data-el="关键词" data-ctrl="输入框" /><button class="btn btn-primary hot" data-page="项目管理" data-el="查询" data-ctrl="按钮">查询</button><button class="btn btn-default hot" data-page="项目管理" data-el="重置" data-ctrl="按钮">重置</button><button class="btn btn-primary hot" data-page="项目管理" data-el="新增" data-ctrl="按钮" data-jump="modal:项目管理/编辑抽屉">新增</button></div><div class="toolbar"><span style="font-size:13px;color:#606266">项目三库</span><button class="btn btn-default hot" data-page="项目管理" data-el="监测配置" data-ctrl="按钮" data-jump="page:监测配置">监测配置</button><button class="btn btn-default hot" data-page="项目管理" data-el="应急库" data-ctrl="按钮" data-jump="page:应急库">应急库</button><button class="btn btn-default hot" data-page="项目管理" data-el="基础参数" data-ctrl="按钮" data-jump="page:基础参数">基础参数</button></div><table class="proto-table"><thead><tr><th class="hot" data-page="项目管理" data-el="列-项目名称" data-ctrl="表头">项目名称</th><th class="hot" data-page="项目管理" data-el="列-编码" data-ctrl="表头">编码</th><th class="hot" data-page="项目管理" data-el="列-管线类型" data-ctrl="表头">管线类型</th><th class="hot" data-page="项目管理" data-el="列-状态" data-ctrl="表头">状态</th><th class="hot" data-page="项目管理" data-el="列-测点数" data-ctrl="表头">测点数</th><th class="hot" data-page="项目管理" data-el="操作列" data-ctrl="表头">操作</th></tr></thead><tbody><tr><td>精矿管输系统</td><td>ore</td><td>精矿</td><td><span class="tag tag-success">启用</span></td><td>128</td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="项目管理" data-el="行操作-进入项目" data-ctrl="按钮">进入项目</a><a class="btn-link hot" href="javascript:void(0)" data-page="项目管理" data-el="行操作-编辑" data-ctrl="按钮" data-jump="modal:项目管理/编辑抽屉">编辑</a></td></tr><tr><td>尾矿管输系统</td><td>tailing</td><td>尾矿</td><td><span class="tag tag-success">启用</span></td><td>86</td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="项目管理" data-el="行操作-进入项目" data-ctrl="按钮">进入项目</a><a class="btn-link hot" href="javascript:void(0)" data-page="项目管理" data-el="行操作-编辑" data-ctrl="按钮" data-jump="modal:项目管理/编辑抽屉">编辑</a></td></tr></tbody></table></div></div><div class="drawer-mask"></div>
-<div class="drawer hot" data-modal-id="项目管理/编辑抽屉" data-page="项目管理" data-el="编辑项目" data-ctrl="抽屉">
-  <div class="drawer-hd">编辑项目 <span class="drawer-close">×</span></div>
+<div class="drawer" data-modal-id="项目管理/编辑抽屉">
+  <div class="drawer-hd hot" data-page="项目管理" data-el="编辑项目" data-ctrl="抽屉">编辑项目 <span class="drawer-close">×</span></div>
   <div class="drawer-bd"><div class="form-row"><label>项目名称</label><input class="inp hot" value="精矿管输系统" data-page="项目管理" data-el="项目名称" data-ctrl="输入框" /></div><div class="form-row"><label>编码</label><input class="inp hot" value="ore" data-page="项目管理" data-el="编码" data-ctrl="输入框" /></div><div class="form-row"><label>管线类型</label><select class="inp hot" data-page="项目管理" data-el="管线类型" data-ctrl="下拉"><option selected>精矿</option><option>尾矿</option></select></div></div>
   <div class="drawer-ft">
     <button class="btn btn-default hot" data-page="项目管理" data-el="取消" data-ctrl="按钮">取消</button>
@@ -449,8 +451,8 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 <span class="spacer"></span>
 <span class="hot" data-page="告警列表" data-el="当前用户" data-ctrl="按钮" style="font-size:13px;color:#606266">管理员 ▾</span>
 </div><div class="page-body"><div class="page-card"><div class="toolbar"><select class="inp hot" data-page="告警列表" data-el="筛-等级" data-ctrl="下拉" data-options="全部/红/橙/蓝"><option selected>全部</option><option>红</option><option>橙</option><option>蓝</option></select><input class="inp hot" placeholder="关键词" data-page="告警列表" data-el="关键词" data-ctrl="输入框" /><button class="btn btn-primary hot" data-page="告警列表" data-el="查询" data-ctrl="按钮">查询</button><button class="btn btn-default hot" data-page="告警列表" data-el="重置" data-ctrl="按钮">重置</button><button class="btn btn-primary hot" data-page="告警列表" data-el="确认选中" data-ctrl="按钮" data-jump="modal:confirm-alarm">确认选中</button></div><table class="proto-table"><thead><tr><th class="hot" data-page="告警列表" data-el="列-类型" data-ctrl="表头">类型</th><th class="hot" data-page="告警列表" data-el="列-等级" data-ctrl="表头">等级</th><th class="hot" data-page="告警列表" data-el="列-时间" data-ctrl="表头">时间</th><th class="hot" data-page="告警列表" data-el="列-位置" data-ctrl="表头">位置</th><th class="hot" data-page="告警列表" data-el="列-状态" data-ctrl="表头">状态</th><th class="hot" data-page="告警列表" data-el="操作列" data-ctrl="表头">操作</th></tr></thead><tbody><tr><td>超压</td><td><span class="tag tag-danger">红 · 三级</span></td><td>10:01</td><td>KP12.3</td><td><span class="tag tag-danger">未确认</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="告警列表" data-el="行操作-确认" data-ctrl="按钮" data-jump="modal:confirm-alarm">确认</a><a class="btn-link hot" href="javascript:void(0)" data-page="告警列表" data-el="行操作-定位" data-ctrl="按钮" data-jump="page:告警三维联动">定位</a></td></tr><tr><td>堵管风险</td><td><span class="tag tag-warning">橙 · 二级</span></td><td>09:44</td><td>KP8.1</td><td><span class="tag tag-info">已确认</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="告警列表" data-el="行操作-确认" data-ctrl="按钮" data-jump="modal:confirm-alarm">确认</a><a class="btn-link hot" href="javascript:void(0)" data-page="告警列表" data-el="行操作-定位" data-ctrl="按钮" data-jump="page:告警三维联动">定位</a></td></tr></tbody></table></div></div><div class="modal-overlay is-open" data-modal-id="confirm-alarm">
-  <div class="modal-dialog hot" data-page="告警列表" data-el="确认告警" data-ctrl="弹窗">
-    <div class="modal-hd">确认告警</div>
+  <div class="modal-dialog">
+    <div class="modal-hd hot" data-page="告警列表" data-el="确认告警" data-ctrl="弹窗">确认告警</div>
     <div class="modal-bd">确认处理「超压 KP12.3」？确认后停止闪烁并写入操作日志。</div>
     <div class="modal-ft">
       <button class="btn btn-default hot" data-page="告警列表" data-el="取消" data-ctrl="按钮">取消</button>
@@ -470,8 +472,8 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 <span class="spacer"></span>
 <span class="hot" data-page="工单管理" data-el="当前用户" data-ctrl="按钮" style="font-size:13px;color:#606266">管理员 ▾</span>
 </div><div class="page-body"><div class="page-card"><div class="toolbar"><select class="inp hot" data-page="工单管理" data-el="筛-状态" data-ctrl="下拉" data-options="待确认/处理中/已完成"><option selected>待确认</option><option>处理中</option><option>已完成</option></select><input class="inp hot" placeholder="关键词" data-page="工单管理" data-el="关键词" data-ctrl="输入框" /><button class="btn btn-primary hot" data-page="工单管理" data-el="查询" data-ctrl="按钮">查询</button><button class="btn btn-default hot" data-page="工单管理" data-el="重置" data-ctrl="按钮">重置</button><button class="btn btn-primary hot" data-page="工单管理" data-el="新增" data-ctrl="按钮" data-jump="modal:工单管理/详情抽屉">新增</button></div><table class="proto-table"><thead><tr><th class="hot" data-page="工单管理" data-el="列-单号" data-ctrl="表头">单号</th><th class="hot" data-page="工单管理" data-el="列-来源" data-ctrl="表头">来源</th><th class="hot" data-page="工单管理" data-el="列-处置人" data-ctrl="表头">处置人</th><th class="hot" data-page="工单管理" data-el="列-状态" data-ctrl="表头">状态</th><th class="hot" data-page="工单管理" data-el="操作列" data-ctrl="表头">操作</th></tr></thead><tbody><tr><td>WO-1021</td><td>告警联动</td><td>张主管</td><td><span class="tag tag-info">处理中</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="工单管理" data-el="行操作-详情" data-ctrl="按钮" data-jump="modal:工单管理/详情抽屉">详情</a></td></tr><tr><td>WO-1018</td><td>人工创建</td><td>李值班</td><td><span class="tag tag-success">已完成</span></td><td class="ops"><a class="btn-link hot" href="javascript:void(0)" data-page="工单管理" data-el="行操作-详情" data-ctrl="按钮" data-jump="modal:工单管理/详情抽屉">详情</a></td></tr></tbody></table></div></div><div class="drawer-mask"></div>
-<div class="drawer hot" data-modal-id="工单管理/详情抽屉" data-page="工单管理" data-el="工单详情" data-ctrl="抽屉">
-  <div class="drawer-hd">工单详情 <span class="drawer-close">×</span></div>
+<div class="drawer" data-modal-id="工单管理/详情抽屉">
+  <div class="drawer-hd hot" data-page="工单管理" data-el="工单详情" data-ctrl="抽屉">工单详情 <span class="drawer-close">×</span></div>
   <div class="drawer-bd"><div class="form-row"><label>单号</label><input class="inp hot" value="WO-1021" data-page="工单管理" data-el="单号" data-ctrl="输入框" /></div><div class="form-row"><label>来源</label><input class="inp hot" value="告警联动" data-page="工单管理" data-el="来源" data-ctrl="输入框" /></div><div class="form-row"><label>处置人</label><input class="inp hot" value="张主管" data-page="工单管理" data-el="处置人" data-ctrl="输入框" /></div><div class="form-row"><label>状态</label><select class="inp hot" data-page="工单管理" data-el="状态" data-ctrl="下拉"><option>待确认</option><option selected>处理中</option><option>已完成</option></select></div></div>
   <div class="drawer-ft">
     <button class="btn btn-default hot" data-page="工单管理" data-el="取消" data-ctrl="按钮">取消</button>
@@ -647,6 +649,7 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
 
 
 
+
 (function () {
   const LS_KEY = "ai-rd-board-pipeline-blue-v1";
   const TYPES = ["改文案","增字段","删区块","改交互","改规则","改布局","其他"];
@@ -810,7 +813,7 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
       if (target) target.classList.add("jump-target");
       hint = "打开弹窗「" + id + "」· ⌘/Ctrl+单击聚焦所在页";
     }
-    if (target && fromEl) drawJumpCurve(fromEl, target);
+    if (target && fromEl && target !== fromEl && !target.contains(fromEl)) drawJumpCurve(fromEl, target);
     return hint;
   }
   /** ⌘/Ctrl+单击：平移缩放使目标页框进入视口中央 */
@@ -956,6 +959,7 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
 
   renderScope(); load(); renderNotes(); applyTransform();
 })();
+
 
 
 
