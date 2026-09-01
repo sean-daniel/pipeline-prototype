@@ -58,6 +58,9 @@ main{flex:1;position:relative;overflow:hidden;background:linear-gradient(90deg,r
 .drawer,.modal-dialog,.modal-overlay,.pin,.viz-panel{outline:none}
 .ghost{color:var(--muted)}.hint{color:var(--muted);font-size:12px;margin-top:8px}
 #tip{display:none;position:fixed;z-index:20;max-width:280px;background:#1a1a1a;color:#fff;font-size:11px;padding:8px 10px;pointer-events:none;line-height:1.4}
+#boardSelectMenu{position:fixed;z-index:10000;display:none;background:#fff;border:1px solid #dcdfe6;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.15);max-height:240px;overflow:auto;min-width:120px;font-size:13px;color:#303133}
+#boardSelectMenu div{padding:8px 12px;cursor:pointer}
+#boardSelectMenu div:hover,#boardSelectMenu div.on{background:#ecf5ff;color:#409EFF}
 #tip b{color:#9ec1ff}#tip .jump{color:#ffb78a}
 
 /* 蓝色模拟后台（页框内） */
@@ -650,6 +653,7 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
 
 
 
+
 (function () {
   const LS_KEY = "ai-rd-board-pipeline-blue-v1";
   const TYPES = ["改文案","增字段","删区块","改交互","改规则","改布局","其他"];
@@ -735,12 +739,13 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
     });
     save();
   }
-  function addNote(partial) {
+  function addNote(partial, opts) {
     notes.push(Object.assign({
       id: uid(), page: "", el: "", field: "", ctrl: "", options: "", note: "",
       type: "其他", opinion: "", status: "待改", scope: "page"
     }, partial));
     save(); renderNotes();
+    if (opts && opts.focus === false) return;
     const ta = notesEl.querySelector(".note textarea"); if (ta) ta.focus();
   }
 
@@ -890,16 +895,48 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
   });
   world.addEventListener("click", e => {
     const el = hotTarget(e); if (!el || !world.contains(el)) return;
-    e.preventDefault(); e.stopPropagation();
+    const raw = e.target instanceof Element ? e.target : el;
+    const tag = (raw.tagName || "").toUpperCase();
+    // 原生下拉/输入：不拦截、不抢左侧待改框焦点，否则选项会闪一下就关
+    if (/^(INPUT|SELECT|TEXTAREA|OPTION|LABEL)$/.test(tag) || raw.closest("select,input,textarea")) return;
     if ((e.metaKey || e.ctrlKey) && el.dataset.jump) {
+      e.preventDefault(); e.stopPropagation();
       focusJumpTarget(el.dataset.jump, el);
       return;
     }
+    // 打开弹窗/抽屉：只加 is-open，不 toggle 关掉
+    if (el.dataset.jump && el.dataset.jump.indexOf("modal:") === 0) {
+      e.preventDefault();
+      const id = el.dataset.jump.slice(6);
+      const layer = world.querySelector('[data-modal-id="' + id + '"]');
+      if (layer) {
+        layer.classList.add("is-open");
+        if (layer.classList.contains("drawer")) {
+          const mask = layer.previousElementSibling;
+          if (mask && mask.classList.contains("drawer-mask")) mask.classList.add("is-open");
+        }
+      }
+      return;
+    }
+    const txt = (el.textContent || "").replace(/\s+/g, "");
+    if (el.classList.contains("drawer-close") || txt === "×" || el.dataset.el === "取消") {
+      e.preventDefault();
+      const drawer = el.closest(".drawer");
+      const overlay = el.closest(".modal-overlay");
+      if (drawer) {
+        drawer.classList.remove("is-open");
+        const mask = drawer.previousElementSibling;
+        if (mask && mask.classList.contains("drawer-mask")) mask.classList.remove("is-open");
+      }
+      if (overlay) overlay.classList.remove("is-open");
+      return;
+    }
+    e.preventDefault(); e.stopPropagation();
     addNote({
       scope: "page", page: el.dataset.page || "", el: el.dataset.el || "",
       field: el.dataset.el || "", ctrl: el.dataset.ctrl || "",
       options: el.dataset.options || "", note: el.dataset.note || "", type: "其他"
-    });
+    }, { focus: false });
   });
 
   viewport.addEventListener("wheel", e => {
@@ -957,8 +994,57 @@ window.__SPEC__ = {"project":"矿浆管道专家系统 · 蓝色模拟原型","s
   const gsel = document.getElementById("globalType");
   TYPES.forEach(t => { const o = document.createElement("option"); o.value = t; o.textContent = t; if (t === "改布局") o.selected = true; gsel.appendChild(o); });
 
+
+  (function boardSelectMenu() {
+    var menu = document.getElementById("boardSelectMenu");
+    if (!menu) {
+      menu = document.createElement("div");
+      menu.id = "boardSelectMenu";
+      document.body.appendChild(menu);
+    }
+    function hideMenu() { menu.style.display = "none"; menu.innerHTML = ""; }
+    function showFor(sel) {
+      if (tip) tip.style.display = "none";
+      var r = sel.getBoundingClientRect();
+      menu.innerHTML = "";
+      Array.from(sel.options).forEach(function (opt) {
+        var d = document.createElement("div");
+        d.textContent = opt.textContent;
+        if (opt.selected) d.className = "on";
+        d.onmousedown = function (ev) {
+          ev.preventDefault(); ev.stopPropagation();
+          sel.value = opt.value;
+          sel.dispatchEvent(new Event("change", { bubbles: true }));
+          hideMenu();
+        };
+        menu.appendChild(d);
+      });
+      menu.style.display = "block";
+      menu.style.left = r.left + "px";
+      menu.style.top = (r.bottom + 2) + "px";
+      menu.style.minWidth = Math.max(r.width, 120) + "px";
+    }
+    world.addEventListener("mousedown", function (e) {
+      var t = e.target instanceof Element ? e.target : null;
+      if (!t) return;
+      var sel = t.closest("select");
+      if (sel && world.contains(sel)) {
+        e.preventDefault();
+        e.stopPropagation();
+        showFor(sel);
+      }
+    }, true);
+    document.addEventListener("mousedown", function (e) {
+      if (menu.style.display === "none") return;
+      var t = e.target instanceof Element ? e.target : null;
+      if (t && (menu.contains(t) || (t.closest && t.closest("select") && world.contains(t.closest("select"))))) return;
+      hideMenu();
+    }, true);
+  })();
+
   renderScope(); load(); renderNotes(); applyTransform();
 })();
+
 
 
 
